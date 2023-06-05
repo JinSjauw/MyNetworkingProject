@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
             Debug.Log("Instance Already exist, destroying object");
             Destroy(this);
         }
+        
+        Application.runInBackground = true;
     }
 
     public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)
@@ -38,5 +40,7 @@ public class GameManager : MonoBehaviour
         _player.GetComponent<PlayerManager>().id = _id;
         _player.GetComponent<PlayerManager>().username = _username;
         players.Add(_id, _player.GetComponent<PlayerManager>());
+        
+        Debug.Log($"Username: {Client.instance.myId} || Added: {_username} : {_id}");
     }
 }
