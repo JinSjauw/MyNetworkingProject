@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();
 
     public GameObject localPlayerPrefab;
+    public GameObject playerGhostPrefab;
     public GameObject playerPrefab;
     private void Awake()
     {
@@ -28,9 +29,13 @@ public class GameManager : MonoBehaviour
     public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)
     {
         GameObject _player;
+        GameObject _playerGhost;
         if (_id == Client.instance.myId)
         {
             _player = Instantiate(localPlayerPrefab, _position, _rotation);
+            _playerGhost = Instantiate(playerGhostPrefab, _position, _rotation);
+            _player.GetComponent<PlayerManager>().playerGhost = _playerGhost.transform;
+            _player.GetComponent<PlayerManager>().playerController = _player.GetComponent<PlayerController>();
         }
         else
         {
@@ -39,6 +44,7 @@ public class GameManager : MonoBehaviour
 
         _player.GetComponent<PlayerManager>().id = _id;
         _player.GetComponent<PlayerManager>().username = _username;
+
         players.Add(_id, _player.GetComponent<PlayerManager>());
         
         Debug.Log($"Username: {Client.instance.myId} || Added: {_username} : {_id}");
