@@ -32,6 +32,8 @@ public class ClientHandle : MonoBehaviour
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
         
+        Debug.Log($"Player ID {_id} Name: {_username} ");
+
         GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
     }
 
@@ -44,15 +46,25 @@ public class ClientHandle : MonoBehaviour
         
         if (GameManager.players.ContainsKey(_id))
         {
-            //GameManager.players[_id].
-            GameManager.players[_id].playerController.Reconcile(
-                new StatePayload()
-                {
-                    tick = _packetTick,
-                    position = _position,
-                });
-            GameManager.players[_id].playerGhost.position = _position;
-            GameManager.players[_id].playerGhost.rotation = _rotation;
+            if (Client.instance.myId == _id)
+            {
+                /*GameManager.players[_id].playerController.Reconcile( 
+                    new StatePayload()
+                    {
+                        tick = _packetTick,
+                        position = _position,
+                        rotation = _rotation,
+                    });*/
+                GameManager.players[_id].transform.position = _position;
+                GameManager.players[_id].transform.rotation = _rotation;
+                GameManager.players[_id].playerGhost.position = _position;
+                GameManager.players[_id].playerGhost.rotation = _rotation;
+            }
+            else
+            {
+                GameManager.players[_id].transform.position = _position;
+                GameManager.players[_id].transform.rotation = _rotation;
+            }
         }
     }
     
@@ -65,7 +77,7 @@ public class ClientHandle : MonoBehaviour
 
         if (GameManager.players.ContainsKey(_id))
         {
-            //GameManager.players[_id].transform.rotation = _rotation;
+            GameManager.players[_id].transform.rotation = _rotation;
             GameManager.players[_id].playerGhost.rotation = _rotation;
         }
     }

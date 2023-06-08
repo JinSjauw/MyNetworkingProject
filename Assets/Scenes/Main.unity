@@ -860,6 +860,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ip: 127.0.0.1
   port: 26950
+  tick: 0
   myId: 0
 --- !u!4 &746984224
 Transform:
@@ -1119,7 +1120,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-119668
+  m_Name: pb_Mesh27770
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1307,6 +1308,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localPlayerPrefab: {fileID: 2901799347176774115, guid: 047199d2f31521445ae95478c2559bf5,
+    type: 3}
+  playerGhostPrefab: {fileID: 2901799347176774115, guid: 85f67c6af26a8c647a998d4376a62f23,
     type: 3}
   playerPrefab: {fileID: 2901799347176774115, guid: db0f5b6906632fa41921b727f7f2bc19,
     type: 3}

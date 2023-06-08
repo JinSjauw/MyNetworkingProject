@@ -19,6 +19,7 @@ public struct StatePayload
 {
     public uint tick;
     public Vector3 position;
+    public Quaternion rotation;
 
     public override string ToString()
     {
@@ -34,9 +35,10 @@ public class PlayerController : MonoBehaviour
 
     private StatePayload[] stateBuffer;
     private InputPayload[] inputBuffer;
-    private float moveSpeed = 5f;
+    private float moveSpeed = 3f;
 
     private ClientPrediction clientPrediction;
+    private CameraController cameraController;
     
     private void Awake()
     {
@@ -47,8 +49,9 @@ public class PlayerController : MonoBehaviour
         inputBuffer = new InputPayload[Constants.BUFFER_SIZE];
 
         moveSpeed /= Constants.MS_PER_TICK;
-
+        
         clientPrediction = new ClientPrediction();
+        cameraController = GetComponentInChildren<CameraController>();
     }
 
     private void Update()
@@ -60,7 +63,6 @@ public class PlayerController : MonoBehaviour
             HandleTick();
             currentTick++;
         }
-        
         /*Debug.Log(currentTick);*/
     }
 
@@ -72,25 +74,35 @@ public class PlayerController : MonoBehaviour
         inputPayload.tick = currentTick;
         inputPayload.inputs = inputs;
         inputBuffer[bufferIndex] = inputPayload;
-        stateBuffer[bufferIndex] = ProcessMovement(inputs);
-        
-        ClientSend.PlayerMovement(currentTick, inputs);
-    }
 
-    private StatePayload ProcessMovement(bool[] _inputs)
-    {
-        Vector3 movement = clientPrediction.HandleMovement(_inputs, moveSpeed);
-        transform.position += movement;
-        return new StatePayload()
+        /*bool[] inputs = SetInputs();*/
+        Quaternion newRotation = cameraController.Rotate();
+        Vector3 newPosition = ProcessMovement(inputs, newRotation);
+        
+        transform.position = newPosition;
+        transform.rotation = newRotation;
+        
+        stateBuffer[bufferIndex] = new StatePayload()
         {
             tick = currentTick,
-            position = transform.position
+            position = transform.position,
+            rotation = transform.rotation,
         };
+        
+        ClientSend.PlayerMovement(currentTick, inputs, transform.rotation);
+    }
+
+    private Vector3 ProcessMovement(bool[] _inputs, Quaternion _rotation)
+    {
+        Vector3 movement = clientPrediction.HandleMovement(_inputs, moveSpeed, _rotation);
+        Vector3 position = transform.position;
+        position += movement;
+
+        return position;
     }
 
     private bool[] SetInputs()
     {
-        
         bool[] _inputs = new bool[]
         {
             Input.GetKey(KeyCode.W),
@@ -106,20 +118,32 @@ public class PlayerController : MonoBehaviour
     public void Reconcile(StatePayload _serverState)
     {
         uint serverBufferIndex = _serverState.tick % Constants.BUFFER_SIZE;
-        StatePayload toReconcileState = stateBuffer[serverBufferIndex];
+        StatePayload predictedState = stateBuffer[serverBufferIndex];
+
+        //Debug.Log("Client Rot: " + predictedState.rotation + " Server Rot: " + _serverState.rotation);
         
-        float positionError = Vector3.Distance(_serverState.position, toReconcileState.position);
+        float positionError = Vector3.Distance(_serverState.position, predictedState.position);
         if (positionError > 0.01)
         {
-            Debug.Log(_serverState);
-            Debug.Log(toReconcileState);
             transform.position = _serverState.position;
-            uint tickToProcess = _serverState.tick + 1;
 
+            uint tickToProcess = _serverState.tick + 1;
+            stateBuffer[serverBufferIndex] = _serverState;
+            
+            //Apply authoritative state
             while (tickToProcess < currentTick)
             {
                 uint bufferIndex = tickToProcess % Constants.BUFFER_SIZE;
-                StatePayload statePayload = ProcessMovement(inputBuffer[bufferIndex].inputs);
+                Vector3 correctPosition = ProcessMovement(inputBuffer[bufferIndex].inputs, stateBuffer[bufferIndex].rotation);
+                transform.position = correctPosition;
+                
+                StatePayload statePayload = new StatePayload()
+                {
+                    tick = tickToProcess,
+                    position = correctPosition,
+                    rotation = transform.rotation,
+                };
+                
                 stateBuffer[bufferIndex] = statePayload;
 
                 tickToProcess++;

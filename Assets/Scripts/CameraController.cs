@@ -19,11 +19,11 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        Look();
+        //Look();
         Debug.DrawRay(transform.position, transform.forward * 2, Color.red);
     }
 
-    private void Look()
+    public Quaternion Rotate()
     {
         float _mouseVertical = -Input.GetAxis("Mouse Y");
         float _mouseHorizontal = Input.GetAxis("Mouse X");
@@ -33,7 +33,9 @@ public class CameraController : MonoBehaviour
 
         verticalRotation = Mathf.Clamp(verticalRotation, -clampAngle, clampAngle);
 
-        transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
-        player.transform.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
+        //transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
+        //player.transform.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
+        
+        return Quaternion.Euler(0f, horizontalRotation, 0f);
     }
 }
