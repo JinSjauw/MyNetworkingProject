@@ -29,7 +29,7 @@ public struct StatePayload
 
 public class PlayerController : MonoBehaviour
 {
-    private uint currentTick;
+    public uint currentTick;
     private float timer;
     private float tickLength;
 
@@ -70,14 +70,6 @@ public class PlayerController : MonoBehaviour
             timer -= tickLength;
             currentTick++;
         }
-        /*Debug.Log(currentTick);*/
-        /*bool[] inputs = SetInputs();
-        
-        Quaternion newRotation = cameraController.Rotate();
-        Vector3 newPosition = ProcessMovement(inputs, newRotation);
-        
-        transform.position = newPosition;
-        transform.rotation = newRotation;*/
     }
 
     private void HandleTick()
@@ -85,15 +77,15 @@ public class PlayerController : MonoBehaviour
         //Handle Reconciliation
         if (lastReceivedTick != nextTickToProcess)
         {
-            StatePayload serverState = serverStates.Dequeue();
-            playerManager.playerGhost.position = serverState.position;
-            playerManager.playerGhost.rotation = serverState.rotation;
-            if (serverState.tick > nextTickToProcess)
+            if (serverStates.Count > 0)
             {
-                Reconcile(serverState);
-                /*uint serverBufferIndex = serverState.tick % Constants.BUFFER_SIZE;
-                playerManager.playerGhost.position = stateBuffer[serverBufferIndex].position;
-                playerManager.playerGhost.rotation = stateBuffer[serverBufferIndex].rotation;*/
+                StatePayload serverState = serverStates.Dequeue();
+                playerManager.playerGhost.position = serverState.position;
+                playerManager.playerGhost.rotation = serverState.rotation;
+                if (serverState.tick > nextTickToProcess)
+                {
+                    Reconcile(serverState);
+                }
             }
         }
 
