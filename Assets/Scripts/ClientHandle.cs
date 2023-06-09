@@ -44,21 +44,21 @@ public class ClientHandle : MonoBehaviour
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
         
+        //Debug.Log($"PacketID: {_packetTick}");
+        
         if (GameManager.players.ContainsKey(_id))
         {
             if (Client.instance.myId == _id)
             {
-                /*GameManager.players[_id].playerController.Reconcile( 
+                GameManager.players[_id].playerController.ReceiveServerState( 
                     new StatePayload()
                     {
                         tick = _packetTick,
                         position = _position,
                         rotation = _rotation,
-                    });*/
-                GameManager.players[_id].transform.position = _position;
-                GameManager.players[_id].transform.rotation = _rotation;
-                GameManager.players[_id].playerGhost.position = _position;
-                GameManager.players[_id].playerGhost.rotation = _rotation;
+                    });
+                /*GameManager.players[_id].playerGhost.position = _position;
+                GameManager.players[_id].playerGhost.rotation = _rotation;*/
             }
             else
             {
