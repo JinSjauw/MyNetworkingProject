@@ -99,11 +99,10 @@ public class PlayerController : MonoBehaviour
         Quaternion newRotation = cameraController.Rotate();
         Vector3 newPosition = ProcessMovement(inputs, newRotation);
 
-        ClientSend.PlayerMovement(currentTick, inputs, newRotation);
-        
         transform.position = newPosition;
         transform.rotation = newRotation;
-        
+        ClientSend.PlayerMovement(currentTick, inputs, newRotation);
+
         stateBuffer[bufferIndex] = new StatePayload()
         {
             tick = currentTick,

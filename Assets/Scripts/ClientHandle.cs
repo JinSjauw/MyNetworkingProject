@@ -60,6 +60,10 @@ public class ClientHandle : MonoBehaviour
             }
             else
             {
+                //Entity Interpolation
+                //need current and received state
+                //interpolate between states
+                // -- interpolate with tick time --
                 GameManager.players[_id].transform.position = _position;
                 GameManager.players[_id].transform.rotation = _rotation;
             }

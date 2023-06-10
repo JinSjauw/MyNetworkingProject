@@ -8,4 +8,17 @@ public class PlayerManager : MonoBehaviour
     public string username;
     public Transform playerGhost;
     public PlayerController playerController;
+
+    private StatePayload[] interpBuffer;
+    
+    public void SaveData()
+    {
+        
+    }
+    
+    //Interpolate
+    public void MovePlayer()
+    {
+        
+    }
 }
