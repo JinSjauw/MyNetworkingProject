@@ -7,7 +7,7 @@ using System.Net.Sockets;
 
 public class Client : MonoBehaviour
 {
-   public static Client instance;
+   public static Client Instance;
    public static int dataBufferSize = 4096;
 
    public string ip = "127.0.0.1";
@@ -22,11 +22,11 @@ public class Client : MonoBehaviour
 
    private void Awake()
    {
-      if (instance == null)
+      if (Instance == null)
       {
-         instance = this;
+         Instance = this;
       }
-      else if(instance != this)
+      else if(Instance != this)
       {
          Debug.Log("Instance Already exist, destroying object");
          Destroy(this);
@@ -68,7 +68,7 @@ public class Client : MonoBehaviour
          };
 
          receiveBuffer = new byte[dataBufferSize];
-         socket.BeginConnect(instance.ip, instance.port, ConnectCallback, socket);
+         socket.BeginConnect(Instance.ip, Instance.port, ConnectCallback, socket);
       }
 
       private void ConnectCallback(IAsyncResult _result)
@@ -111,7 +111,7 @@ public class Client : MonoBehaviour
             int _byteLength = stream.EndRead(_result);
             if (_byteLength <= 0)
             {
-               instance.Disconnect();
+               Instance.Disconnect();
                return;
             }
 
@@ -176,7 +176,7 @@ public class Client : MonoBehaviour
 
       private void Disconnect()
       {
-         instance.Disconnect();
+         Instance.Disconnect();
 
          stream = null;
          receivedData = null;
@@ -192,7 +192,7 @@ public class Client : MonoBehaviour
 
       public UDP()
       {
-         endPoint = new IPEndPoint(IPAddress.Parse(instance.ip), instance.port);
+         endPoint = new IPEndPoint(IPAddress.Parse(Instance.ip), Instance.port);
       }
 
       public void Connect(int _localPort)
@@ -212,7 +212,7 @@ public class Client : MonoBehaviour
       {
          try
          {
-            _packet.InsertInt(instance.myId);
+            _packet.InsertInt(Instance.myId);
             if (socket != null)
             {
                socket.BeginSend(_packet.ToArray(), _packet.Length(), null, null);
@@ -233,7 +233,7 @@ public class Client : MonoBehaviour
 
             if (_data.Length < 4)
             {
-               instance.Disconnect();
+               Instance.Disconnect();
                return;
             }
 
@@ -265,7 +265,7 @@ public class Client : MonoBehaviour
       
       private void Disconnect()
       {
-         instance.Disconnect();
+         Instance.Disconnect();
 
          endPoint = null;
          socket = null;
@@ -280,6 +280,7 @@ public class Client : MonoBehaviour
          { (int)ServerPackets.udpTest, ClientHandle.UDPTest },
          { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
          { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
+         { (int)ServerPackets.timeRequest, ClientHandle.ReceiveTime}
          //{ (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },
       };
       Debug.Log("Initialize Packets...");

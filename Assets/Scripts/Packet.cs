@@ -11,6 +11,7 @@ public enum ServerPackets
     spawnPlayer = 3,
     playerRotation = 4,
     playerPosition = 5,
+    timeRequest = 6,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -19,6 +20,7 @@ public enum ClientPackets
     welcomeReceived = 1,
     udpTestReceive = 2,
     playerMovement = 3,
+    timeRequest = 4,
 }
 
 public class Packet : IDisposable

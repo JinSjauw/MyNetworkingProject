@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
@@ -9,12 +10,12 @@ public class ClientHandle : MonoBehaviour
     {
         string _msg = _packet.ReadString();
         int _myId = _packet.ReadInt();
-        
+
         Debug.Log($"Message from server: {_msg}");
-        Client.instance.myId = _myId;
+        Client.Instance.myId = _myId;
         ClientSend.WelcomeReceived();
-        
-        Client.instance.udp.Connect(((IPEndPoint)Client.instance.tcp.socket.Client.LocalEndPoint).Port);
+        Client.Instance.udp.Connect(((IPEndPoint)Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
+        ClientSend.RequestTime();
     }
 
     public static void UDPTest(Packet _packet)
@@ -23,6 +24,17 @@ public class ClientHandle : MonoBehaviour
         
         Debug.Log($"Received packet via UDP. MESSAGE: {_msg}");
         ClientSend.UDPTestReceived();
+    }
+    
+    public static void ReceiveTime(Packet _packet)
+    {
+        float serverTime = _packet.ReadFloat();
+        
+        GameManager.stopWatch.Stop();
+        float rtt = GameManager.stopWatch.ElapsedMilliseconds;
+        GameManager.clientTimer = serverTime + (rtt / 1000f);
+        
+        Debug.Log($"Received Server Time: {serverTime} RTT: {rtt}");
     }
 
     public static void SpawnPlayer(Packet _packet)
@@ -34,38 +46,37 @@ public class ClientHandle : MonoBehaviour
         
         Debug.Log($"Player ID {_id} Name: {_username} ");
 
-        GameManager.instance.SpawnPlayer(_id, _username, _position, _rotation);
+        GameManager.Instance.SpawnPlayer(_id, _username, _position, _rotation);
     }
 
     public static void PlayerPosition(Packet _packet)
     {
         int _id = _packet.ReadInt();
         uint _packetTick = _packet.ReadUint();
+        uint _serverTick = _packet.ReadUint();
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
         
-        Debug.Log($"PacketID: {_packetTick}");
+        //Debug.Log($"PacketID: {_packetTick}");
 
+        StatePayload receivedState = new StatePayload
+        {
+            tick = _packetTick,
+            serverTick = _serverTick,
+            position = _position,
+            rotation = _rotation,
+        };
+       
+        
         if (GameManager.players.ContainsKey(_id))
         {
-            if (Client.instance.myId == _id)
+            if (Client.Instance.myId == _id)
             {
-                GameManager.players[_id].playerController.ReceiveServerState( 
-                    new StatePayload()
-                    {
-                        tick = _packetTick,
-                        position = _position,
-                        rotation = _rotation,
-                    });
+                GameManager.players[_id].ReceiveServerState(receivedState);
             }
             else
             {
-                //Entity Interpolation
-                //need current and received state
-                //interpolate between states
-                // -- interpolate with tick time --
-                GameManager.players[_id].transform.position = _position;
-                GameManager.players[_id].transform.rotation = _rotation;
+                GameManager.players[_id].ReceiveServerState(receivedState);
             }
         }
     }

@@ -18,6 +18,7 @@ public struct InputPayload
 public struct StatePayload
 {
     public uint tick;
+    public uint serverTick;
     public Vector3 position;
     public Quaternion rotation;
 
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour
         playerManager = GetComponent<PlayerManager>();
     }
 
-    private void Update()
+    /*private void Update()
     {
         timer += Time.deltaTime;
         while (timer >= tickLength)
@@ -70,9 +71,9 @@ public class PlayerController : MonoBehaviour
             timer -= tickLength;
             currentTick++;
         }
-    }
+    }*/
 
-    private void HandleTick()
+    public void HandleTick()
     {
         //Handle Reconciliation
         if (lastReceivedTick != nextTickToProcess)
@@ -109,6 +110,8 @@ public class PlayerController : MonoBehaviour
             position = newPosition,
             rotation = newRotation,
         };
+
+        currentTick++;
     }
 
     private Vector3 ProcessMovement(bool[] _inputs, Quaternion _rotation)
