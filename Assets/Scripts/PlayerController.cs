@@ -18,13 +18,14 @@ public struct InputPayload
 public struct StatePayload
 {
     public uint tick;
-    public uint serverTick;
+    public float timeStamp;
+    public float roundTripTime;
     public Vector3 position;
     public Quaternion rotation;
 
     public override string ToString()
     {
-        return $"Tick: {tick}  Position: {position}";
+        return $"Tick: {tick} TimeStamp: {timeStamp} Position: {position} Rotation: {rotation}";
     }
 }
 
@@ -61,18 +62,7 @@ public class PlayerController : MonoBehaviour
         cameraController = GetComponentInChildren<CameraController>();
         playerManager = GetComponent<PlayerManager>();
     }
-
-    /*private void Update()
-    {
-        timer += Time.deltaTime;
-        while (timer >= tickLength)
-        {
-            HandleTick();
-            timer -= tickLength;
-            currentTick++;
-        }
-    }*/
-
+    
     public void HandleTick()
     {
         //Handle Reconciliation

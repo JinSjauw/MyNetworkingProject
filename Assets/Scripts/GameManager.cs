@@ -37,7 +37,6 @@ public class GameManager : MonoBehaviour
 
         tickLength = Constants.MS_PER_TICK;
         tickLength /= 1000;
-        
         Application.runInBackground = true;
     }
 
@@ -64,7 +63,6 @@ public class GameManager : MonoBehaviour
             }
             timerA -= tickLength;
             clientTimer += Constants.MS_PER_TICK / 1000f;
-            Debug.Log(clientTimer);
             currentTick++;
         }
     }

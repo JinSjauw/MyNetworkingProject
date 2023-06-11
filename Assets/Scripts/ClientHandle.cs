@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class ClientHandle : MonoBehaviour
 {
@@ -29,10 +31,9 @@ public class ClientHandle : MonoBehaviour
     public static void ReceiveTime(Packet _packet)
     {
         float serverTime = _packet.ReadFloat();
-        
         GameManager.stopWatch.Stop();
         float rtt = GameManager.stopWatch.ElapsedMilliseconds;
-        GameManager.clientTimer = serverTime + (rtt / 1000f);
+        GameManager.clientTimer = serverTime + (rtt / 1000f) / 2;
         
         Debug.Log($"Received Server Time: {serverTime} RTT: {rtt}");
     }
@@ -53,20 +54,25 @@ public class ClientHandle : MonoBehaviour
     {
         int _id = _packet.ReadInt();
         uint _packetTick = _packet.ReadUint();
-        uint _serverTick = _packet.ReadUint();
+        float _timeSent = _packet.ReadFloat();
+        float _packetTimestamp = _packet.ReadFloat();
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
         
         //Debug.Log($"PacketID: {_packetTick}");
+        //Calculate RTT with timeSent
 
+        float rtt = GameManager.clientTimer - _timeSent;
+        Debug.Log($"Packet ID: {_packetTick} | RTT: {rtt}");
+        
         StatePayload receivedState = new StatePayload
         {
             tick = _packetTick,
-            serverTick = _serverTick,
+            timeStamp = _packetTimestamp,
+            roundTripTime = rtt,
             position = _position,
             rotation = _rotation,
         };
-       
         
         if (GameManager.players.ContainsKey(_id))
         {
@@ -77,21 +83,9 @@ public class ClientHandle : MonoBehaviour
             else
             {
                 GameManager.players[_id].ReceiveServerState(receivedState);
+                /*GameManager.players[_id].transform.position = _position;
+                GameManager.players[_id].transform.rotation = _rotation;*/
             }
-        }
-    }
-    
-    //Not in use
-    public static void PlayerRotation(Packet _packet)
-    {
-        int _id = _packet.ReadInt();
-        int _packetTick = _packet.ReadInt();
-        Quaternion _rotation = _packet.ReadQuaternion();
-
-        if (GameManager.players.ContainsKey(_id))
-        {
-            GameManager.players[_id].transform.rotation = _rotation;
-            GameManager.players[_id].playerGhost.rotation = _rotation;
         }
     }
 }

@@ -51,6 +51,7 @@ public class ClientSend : MonoBehaviour
         using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
         {
             _packet.Write(_tick);
+            _packet.Write(GameManager.clientTimer);
             _packet.Write(_inputs.Length);
             foreach (bool _input in _inputs)
             {
