@@ -63,7 +63,7 @@ public class ClientHandle : MonoBehaviour
         //Calculate RTT with timeSent
 
         float rtt = GameManager.clientTimer - _timeSent;
-        Debug.Log($"Packet ID: {_packetTick} | RTT: {rtt}");
+        //Debug.Log($"Packet ID: {_packetTick} | RTT: {rtt}");
         
         StatePayload receivedState = new StatePayload
         {

@@ -85,8 +85,6 @@ public class Client : MonoBehaviour
          receivedData = new Packet();
          
          stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
-
-
       }
 
       public void SendData(Packet _packet)

@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     public uint currentTick;
     private float timer;
     private float tickLength;
-
+    
     private Queue<StatePayload> serverStates;
     [SerializeField] private StatePayload[] stateBuffer;
     [SerializeField] private InputPayload[] inputBuffer;
@@ -42,7 +42,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private uint nextTickToProcess;
 
     private float moveSpeed = 3f;
-
+    private bool isColliding = false;
+    
     private ClientPrediction clientPrediction;
     private CameraController cameraController;
     private PlayerManager playerManager;
@@ -90,8 +91,12 @@ public class PlayerController : MonoBehaviour
         Quaternion newRotation = cameraController.Rotate();
         Vector3 newPosition = ProcessMovement(inputs, newRotation);
 
-        transform.position = newPosition;
-        transform.rotation = newRotation;
+        if (!isColliding)
+        {
+            transform.position = newPosition;
+            transform.rotation = newRotation;
+        }
+        
         ClientSend.PlayerMovement(currentTick, inputs, newRotation);
 
         stateBuffer[bufferIndex] = new StatePayload()
@@ -125,6 +130,25 @@ public class PlayerController : MonoBehaviour
         
         //ClientSend.PlayerMovement(_inputs);
         return _inputs;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        other.transform.root.TryGetComponent<PlayerManager>( out PlayerManager player);
+        Debug.Log(other.name);
+        if (player == null)
+        {
+            isColliding = true;
+            transform.position = transform.position;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (isColliding)
+        {
+            isColliding = false;
+        }
     }
 
     public void ReceiveServerState(StatePayload _serverState)
