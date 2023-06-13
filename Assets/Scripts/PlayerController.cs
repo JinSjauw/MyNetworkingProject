@@ -94,10 +94,8 @@ public class PlayerController : MonoBehaviour
         Quaternion newRotation = cameraController.Rotate();
         Vector3 newPosition = ProcessMovement(inputs, newRotation);
 
-        if (!DetectCollision(newPosition))
-        {
-            transform.position = newPosition;
-        }
+        transform.position = newPosition;
+        
         
         transform.rotation = newRotation;
 
@@ -117,8 +115,11 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 movement = clientPrediction.HandleMovement(_inputs, moveSpeed, _rotation);
         Vector3 position = transform.position;
-        position += movement;
 
+        if (!DetectCollision(position + movement))
+        {
+            position += movement;
+        }
         return position;
     }
 
@@ -155,10 +156,10 @@ public class PlayerController : MonoBehaviour
             Vector3 colliderPosition = _collider.transform.position;
             Vector3 colliderSize = _collider.bounds.size;
         
-            if (playerPosition.x < colliderPosition.x + colliderSize.x &&
-                playerPosition.x + .5 > colliderPosition.x &&
-                playerPosition.z < colliderPosition.z + colliderSize.z &&
-                playerPosition.z + .5 > colliderPosition.z)
+            if (playerPosition.x < colliderPosition.x + colliderSize.x + .5f &&
+                playerPosition.x + .5f > colliderPosition.x &&
+                playerPosition.z < colliderPosition.z + colliderSize.z + .5f &&
+                playerPosition.z + .5f > colliderPosition.z)
             {
                 Debug.Log("Collision!");
                 return true;
