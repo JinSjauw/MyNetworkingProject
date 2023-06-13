@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -47,7 +48,8 @@ public class PlayerController : MonoBehaviour
     private ClientPrediction clientPrediction;
     private CameraController cameraController;
     private PlayerManager playerManager;
-    
+    [SerializeField] private List<Collider> colliderList;
+
     private void Awake()
     {
         tickLength = Constants.MS_PER_TICK;
@@ -62,6 +64,7 @@ public class PlayerController : MonoBehaviour
         clientPrediction = new ClientPrediction();
         cameraController = GetComponentInChildren<CameraController>();
         playerManager = GetComponent<PlayerManager>();
+        colliderList = new List<Collider>();
     }
     
     public void HandleTick()
@@ -91,12 +94,13 @@ public class PlayerController : MonoBehaviour
         Quaternion newRotation = cameraController.Rotate();
         Vector3 newPosition = ProcessMovement(inputs, newRotation);
 
-        if (!isColliding)
+        if (!DetectCollision(newPosition))
         {
             transform.position = newPosition;
-            transform.rotation = newRotation;
         }
         
+        transform.rotation = newRotation;
+
         ClientSend.PlayerMovement(currentTick, inputs, newRotation);
 
         stateBuffer[bufferIndex] = new StatePayload()
@@ -128,27 +132,40 @@ public class PlayerController : MonoBehaviour
             Input.GetKey(KeyCode.D),
         };
         
-        //ClientSend.PlayerMovement(_inputs);
         return _inputs;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        other.transform.root.TryGetComponent<PlayerManager>( out PlayerManager player);
-        Debug.Log(other.name);
-        if (player == null)
-        {
-            isColliding = true;
-            transform.position = transform.position;
-        }
+        Debug.Log("Added: " + other);
+        colliderList.Add(other);
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (isColliding)
+        Debug.Log("Removed: " + other);
+        colliderList.Remove(other);
+    }
+
+    private bool DetectCollision(Vector3 _position)
+    {
+        foreach (Collider _collider in colliderList)
         {
-            isColliding = false;
+            Vector3 playerPosition = _position;
+            Vector3 colliderPosition = _collider.transform.position;
+            Vector3 colliderSize = _collider.bounds.size;
+        
+            if (playerPosition.x < colliderPosition.x + colliderSize.x &&
+                playerPosition.x + .5 > colliderPosition.x &&
+                playerPosition.z < colliderPosition.z + colliderSize.z &&
+                playerPosition.z + .5 > colliderPosition.z)
+            {
+                Debug.Log("Collision!");
+                return true;
+            }
         }
+
+        return false;
     }
 
     public void ReceiveServerState(StatePayload _serverState)
