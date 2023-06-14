@@ -75,10 +75,10 @@ public class GameManager : MonoBehaviour
         {
             _player = Instantiate(localPlayerPrefab, _position, _rotation);
             _playerGhost = Instantiate(playerGhostPrefab, _position, _rotation);
-            PlayerManager playerManager = _player.GetComponent<PlayerManager>();
-            playerManager.HandleTick = _player.GetComponent<PlayerController>().HandleTick;
-            playerManager.ReceiveServerState = _player.GetComponent<PlayerController>().ReceiveServerState;
-            _player.GetComponent<PlayerManager>().playerGhost = _playerGhost.transform;
+            PlayerManager playerManager = _player.GetComponentInChildren<PlayerManager>();
+            playerManager.HandleTick = _player.GetComponentInChildren<PlayerController>().HandleTick;
+            playerManager.ReceiveServerState = _player.GetComponentInChildren<PlayerController>().ReceiveServerState;
+            _player.GetComponentInChildren<PlayerManager>().playerGhost = _playerGhost.transform;
         }
         else
         {
@@ -88,10 +88,10 @@ public class GameManager : MonoBehaviour
             playerManager.ReceiveServerState = _player.GetComponent<RemoteEntity>().ReceiveServerState;
         }
 
-        _player.GetComponent<PlayerManager>().id = _id;
-        _player.GetComponent<PlayerManager>().username = _username;
+        _player.GetComponentInChildren<PlayerManager>().id = _id;
+        _player.GetComponentInChildren<PlayerManager>().username = _username;
 
-        players.Add(_id, _player.GetComponent<PlayerManager>());
+        players.Add(_id, _player.GetComponentInChildren<PlayerManager>());
         
         Debug.Log($"Username: {Client.Instance.myId} || Added: {_username} : {_id}");
     }

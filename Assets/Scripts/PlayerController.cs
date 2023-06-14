@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -46,10 +47,11 @@ public class PlayerController : MonoBehaviour
     private bool isColliding = false;
     
     private ClientPrediction clientPrediction;
-    private CameraController cameraController;
     private PlayerManager playerManager;
     [SerializeField] private List<Collider> colliderList;
-
+    [SerializeField] private Camera camera;
+    [SerializeField] private CameraFollow cameraFollow;
+    
     private void Awake()
     {
         tickLength = Constants.MS_PER_TICK;
@@ -62,11 +64,19 @@ public class PlayerController : MonoBehaviour
         moveSpeed /= Constants.MS_PER_TICK;
         
         clientPrediction = new ClientPrediction();
-        cameraController = GetComponentInChildren<CameraController>();
         playerManager = GetComponent<PlayerManager>();
         colliderList = new List<Collider>();
     }
-    
+
+    private void Update()
+    {
+        /*bool[] inputs = SetInputs();
+        Quaternion newRotation = transform.rotation;
+        Vector3 newPosition = ProcessMovement(inputs, newRotation);
+
+        transform.position = newPosition;*/
+    }
+
     public void HandleTick()
     {
         //Handle Reconciliation
@@ -85,19 +95,19 @@ public class PlayerController : MonoBehaviour
         }
 
         uint bufferIndex = currentTick % Constants.BUFFER_SIZE;
+        //Debug.Log(bufferIndex + " " + inputBuffer.Length);
         bool[] inputs = SetInputs();
         InputPayload inputPayload = new InputPayload();
         inputPayload.tick = currentTick;
         inputPayload.inputs = inputs;
         inputBuffer[bufferIndex] = inputPayload;
+
+        LookAtMouse();
         
-        Quaternion newRotation = cameraController.Rotate();
+        Quaternion newRotation = transform.rotation;
         Vector3 newPosition = ProcessMovement(inputs, newRotation);
 
         transform.position = newPosition;
-        
-        
-        transform.rotation = newRotation;
 
         ClientSend.PlayerMovement(currentTick, inputs, newRotation);
 
@@ -107,10 +117,34 @@ public class PlayerController : MonoBehaviour
             position = newPosition,
             rotation = newRotation,
         };
-
+        
+        cameraFollow.UpdateCamera();
         currentTick++;
     }
 
+    private Quaternion ProccessRotation()
+    {
+        Vector2 direction = camera.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        Quaternion newRotation = Quaternion.AngleAxis(angle - 180, Vector3.up);
+
+        return newRotation;
+    }
+    
+    private void LookAtMouse()
+    {
+        Ray ray = camera.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, LayerMask.GetMask("Ground")))
+        {
+            Vector3 target = hit.point;
+            Vector3 direction = target - transform.position;
+            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(0, angle, 0);
+        }
+    }
+    
     private Vector3 ProcessMovement(bool[] _inputs, Quaternion _rotation)
     {
         Vector3 movement = clientPrediction.HandleMovement(_inputs, moveSpeed, _rotation);

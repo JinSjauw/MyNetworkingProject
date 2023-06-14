@@ -13,8 +13,8 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
-        verticalRotation = transform.localEulerAngles.x;
-        horizontalRotation = player.transform.eulerAngles.y;
+        //verticalRotation = transform.localEulerAngles.x;
+        //horizontalRotation = player.transform.eulerAngles.y;
     }
 
     private void Update()
@@ -27,11 +27,17 @@ public class CameraController : MonoBehaviour
     {
         float _mouseVertical = -Input.GetAxis("Mouse Y");
         float _mouseHorizontal = Input.GetAxis("Mouse X");
+        
+        //Object looks at the mouse
 
-        verticalRotation += _mouseVertical * sensitivity * Time.deltaTime;
-        horizontalRotation += _mouseHorizontal * sensitivity * Time.deltaTime;
+        //When right clicking you will drag camera. Won't affect player transform
+        
+        //Move player character towards mouse position
+        
+        //verticalRotation += _mouseVertical * sensitivity * Time.deltaTime;
+        //horizontalRotation += _mouseHorizontal * sensitivity * Time.deltaTime;
 
-        verticalRotation = Mathf.Clamp(verticalRotation, -clampAngle, clampAngle);
+        //verticalRotation = Mathf.Clamp(verticalRotation, -clampAngle, clampAngle);
 
         //transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
         //player.transform.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);

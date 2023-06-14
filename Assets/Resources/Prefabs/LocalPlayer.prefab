@@ -56,6 +56,7 @@ MonoBehaviour:
   lastReceivedTick: 0
   nextTickToProcess: 0
   colliderList: []
+  camera: {fileID: 8126149064708721310}
 --- !u!114 &8775059021647181398
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4493823503976029269
 Transform:
   m_ObjectHideFlags: 0
@@ -125,15 +126,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3070440281172931486}
-  m_LocalRotation: {x: 0.23911765, y: 0.3696438, z: -0.09904577, w: 0.89239913}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.36497167, y: 0.27781588, z: -0.1150751, w: 0.8811196}
+  m_LocalPosition: {x: 0, y: 4, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4226533636314859328}
   m_Father: {fileID: 3123610057548631228}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 30, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 45, y: 35, z: 0}
 --- !u!1 &3158584438723956652
 GameObject:
   m_ObjectHideFlags: 0
