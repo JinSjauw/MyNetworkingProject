@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.SceneManagement;
@@ -5,8 +6,8 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    [SerializeField] private Transform player;
-    [SerializeField] private Camera playerCamera;
+    private Transform player;
+    private Camera playerCamera;
     [SerializeField] private Transform pointPrefab, point2Prefab;
 
     private Vector2 mousePosition;
@@ -15,8 +16,11 @@ public class CameraFollow : MonoBehaviour
     [SerializeField] private float smoothTime = 0.2f;
     
     // Start is called before the first frame update
-    void Start()
+    
+    public void StartCamera(Transform _player, Camera _playerCamera)
     {
+        player = _player;
+        playerCamera = _playerCamera;
         target = player.position;
         yStart = transform.position.y;
     }
@@ -45,9 +49,8 @@ public class CameraFollow : MonoBehaviour
     Vector3 UpdateTarget()
     {
         Vector3 result = (new Vector3(mousePosition.x, 0, mousePosition.y) + player.position) / 2f;
-
         result.y = yStart;
-
+        
         point2Prefab.position = result;
         
         return result;

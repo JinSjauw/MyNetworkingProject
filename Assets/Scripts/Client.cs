@@ -278,7 +278,8 @@ public class Client : MonoBehaviour
          { (int)ServerPackets.udpTest, ClientHandle.UDPTest },
          { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
          { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
-         { (int)ServerPackets.timeRequest, ClientHandle.ReceiveTime}
+         { (int)ServerPackets.timeRequest, ClientHandle.ReceiveTime},
+         { (int)ServerPackets.spawnProjectile, ClientHandle.SpawnProjectile}
          //{ (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },
       };
       Debug.Log("Initialize Packets...");

@@ -2810,6 +2810,8 @@ MonoBehaviour:
     type: 3}
   playerPrefab: {fileID: 2901799347176774115, guid: db0f5b6906632fa41921b727f7f2bc19,
     type: 3}
+  projectilePrefab: {fileID: 4329535253427201203, guid: f3a3d0cd9ddadeb4694374b066c2f744,
+    type: 3}
   currentTick: 0
 --- !u!4 &940428372
 Transform:

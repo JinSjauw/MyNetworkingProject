@@ -17,11 +17,13 @@ public class GameManager : MonoBehaviour
     public GameObject localPlayerPrefab;
     public GameObject playerGhostPrefab;
     public GameObject playerPrefab;
+    public GameObject projectilePrefab;
     public uint currentTick;
 
     private float timeRequestInterval = 5f;
     private float timerA, timerB;
     private float tickLength;
+    private List<Projectile> projectilesList;
 
     private void Awake()
     {
@@ -38,6 +40,7 @@ public class GameManager : MonoBehaviour
         tickLength = Constants.MS_PER_TICK;
         tickLength /= 1000;
         Application.runInBackground = true;
+        projectilesList = new List<Projectile>();
     }
 
     private void Update()
@@ -61,12 +64,25 @@ public class GameManager : MonoBehaviour
             {
                 player.Value.Tick();
             }
+
+            foreach (Projectile projectile in projectilesList)
+            {
+                projectile.UpdateProjectile();
+            }
+            
             timerA -= tickLength;
             clientTimer += Constants.MS_PER_TICK / 1000f;
             currentTick++;
         }
     }
 
+    public Projectile SpawnProjectile()
+    {
+        Projectile spawnedProjectile = Instantiate(projectilePrefab).GetComponent<Projectile>();
+        projectilesList.Add(spawnedProjectile);
+        return spawnedProjectile;
+    }
+    
     public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)
     {
         GameObject _player;

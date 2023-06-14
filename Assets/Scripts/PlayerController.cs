@@ -38,19 +38,21 @@ public class PlayerController : MonoBehaviour
     private float tickLength;
     
     private Queue<StatePayload> serverStates;
-    [SerializeField] private StatePayload[] stateBuffer;
-    [SerializeField] private InputPayload[] inputBuffer;
-    [SerializeField] private uint lastReceivedTick;
-    [SerializeField] private uint nextTickToProcess;
-
-    private float moveSpeed = 3f;
-    private bool isColliding = false;
+    private StatePayload[] stateBuffer;
+    private InputPayload[] inputBuffer;
+    private uint lastReceivedTick;
+    private uint nextTickToProcess;
+    
+    private float moveSpeed = 2f;
+    private bool hasFired = false;
+    private Vector3 lookingDirection;
     
     private ClientPrediction clientPrediction;
     private PlayerManager playerManager;
     [SerializeField] private List<Collider> colliderList;
     [SerializeField] private Camera camera;
     [SerializeField] private CameraFollow cameraFollow;
+    [SerializeField] private Transform projectileOrigin;
     
     private void Awake()
     {
@@ -66,15 +68,15 @@ public class PlayerController : MonoBehaviour
         clientPrediction = new ClientPrediction();
         playerManager = GetComponent<PlayerManager>();
         colliderList = new List<Collider>();
+        cameraFollow.StartCamera(transform, camera);
     }
 
     private void Update()
     {
-        /*bool[] inputs = SetInputs();
-        Quaternion newRotation = transform.rotation;
-        Vector3 newPosition = ProcessMovement(inputs, newRotation);
-
-        transform.position = newPosition;*/
+        if (Input.GetMouseButtonUp(0) && hasFired)
+        {
+            hasFired = false;
+        }
     }
 
     public void HandleTick()
@@ -96,13 +98,14 @@ public class PlayerController : MonoBehaviour
 
         uint bufferIndex = currentTick % Constants.BUFFER_SIZE;
         //Debug.Log(bufferIndex + " " + inputBuffer.Length);
-        bool[] inputs = SetInputs();
+        bool[] inputs = GetMovementInputs();
         InputPayload inputPayload = new InputPayload();
         inputPayload.tick = currentTick;
         inputPayload.inputs = inputs;
         inputBuffer[bufferIndex] = inputPayload;
 
         LookAtMouse();
+        ProcessMouseInput();
         
         Quaternion newRotation = transform.rotation;
         Vector3 newPosition = ProcessMovement(inputs, newRotation);
@@ -122,16 +125,6 @@ public class PlayerController : MonoBehaviour
         currentTick++;
     }
 
-    private Quaternion ProccessRotation()
-    {
-        Vector2 direction = camera.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        Quaternion newRotation = Quaternion.AngleAxis(angle - 180, Vector3.up);
-
-        return newRotation;
-    }
-    
     private void LookAtMouse()
     {
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
@@ -139,8 +132,8 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 100f, LayerMask.GetMask("Ground")))
         {
             Vector3 target = hit.point;
-            Vector3 direction = target - transform.position;
-            float angle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
+            lookingDirection = target - transform.position;
+            float angle = Mathf.Atan2(lookingDirection.x, lookingDirection.z) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(0, angle, 0);
         }
     }
@@ -157,7 +150,30 @@ public class PlayerController : MonoBehaviour
         return position;
     }
 
-    private bool[] SetInputs()
+    private void ProcessMouseInput()
+    {
+        if (Input.GetMouseButton(0) && !hasFired)
+        {
+            hasFired = true;
+            Shoot();
+        }
+    }
+    
+    private void Shoot()
+    {
+        Debug.Log("Shoot");
+        //Send server a shoot packet
+        ClientSend.PlayerShoot(currentTick, projectileOrigin.position, lookingDirection / 2, 2f);
+        //Spawn projectile effects on here;
+        //Audio
+        
+        //If it collides with anything spawn blood
+        //Only call Die() when server says so
+        
+        //server only updates projectile when it hits!
+    }
+    
+    private bool[] GetMovementInputs()
     {
         bool[] _inputs = new bool[]
         {

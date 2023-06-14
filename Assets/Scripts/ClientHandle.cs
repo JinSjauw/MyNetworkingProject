@@ -1,10 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 public class ClientHandle : MonoBehaviour
 {
@@ -83,9 +78,21 @@ public class ClientHandle : MonoBehaviour
             else
             {
                 GameManager.players[_id].ReceiveServerState(receivedState);
-                /*GameManager.players[_id].transform.position = _position;
-                GameManager.players[_id].transform.rotation = _rotation;*/
             }
         }
+    }
+
+    public static void SpawnProjectile(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        float _packetTimestamp = _packet.ReadFloat();
+        int _projectileID = _packet.ReadInt();
+        Vector3 _position = _packet.ReadVector3();
+        Vector3 _direction = _packet.ReadVector3();
+        float _velocity = _packet.ReadFloat();
+        
+        //Create a new Projectile
+        //Object pool that spawns projectile
+        GameManager.Instance.SpawnProjectile().Init(_projectileID, _position, _direction, _velocity);
     }
 }

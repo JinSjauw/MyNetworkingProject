@@ -61,5 +61,20 @@ public class ClientSend : MonoBehaviour
             SendUDPData(_packet);
         }
     }
+
+    public static void PlayerShoot(uint _tick, Vector3 _position, Vector3 _direction, float _velocity)
+    {
+        using (Packet _packet = new Packet((int)ClientPackets.playerShoot))
+        {
+            _packet.Write(_tick);
+            _packet.Write(GameManager.clientTimer);
+            _packet.Write(_position);
+            _packet.Write(_direction);
+            _packet.Write(_velocity);
+
+            SendUDPData(_packet);
+        }
+    }
+
     #endregion
 }
