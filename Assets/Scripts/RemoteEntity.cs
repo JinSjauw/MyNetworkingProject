@@ -13,10 +13,11 @@ public class RemoteEntity : MonoBehaviour
     private float interpTime = 0;
     private float interpDelay = 0.128f;
     //private bool interpolating = false;
-    
+    private PlayerManager playerManager;
     private void Awake()
     {
         interpolationQueue = new Queue<StatePayload>();
+        playerManager = GetComponent<PlayerManager>();
     }
 
     //Interpolate
@@ -51,10 +52,19 @@ public class RemoteEntity : MonoBehaviour
         {
             return;
         }
-        Debug.Log($"Client Clock: {GameManager.clientTimer} lastState Time: {lastProcessedState.timeStamp}  Difference: {GameManager.clientTimer - lastProcessedState.timeStamp}");
+        //Debug.Log($"Client Clock: {GameManager.clientTimer} lastState Time: {lastProcessedState.timeStamp}  Difference: {GameManager.clientTimer - lastProcessedState.timeStamp}");
 
-        Debug.Log(interpolateTarget);
-        Debug.Log(lastProcessedState);
+        //Debug.Log(interpolateTarget);
+        //Debug.Log(lastProcessedState);
+
+        if (Vector3.Distance(interpolateTarget.position, lastProcessedState.position) > 0.1f)
+        {
+            playerManager.IsRunning(true);
+        }
+        else
+        {
+            playerManager.IsRunning(false);
+        }
         
         float difference = (interpolateTarget.timeStamp - lastProcessedState.timeStamp) * 1000f;
         Debug.Log(difference);

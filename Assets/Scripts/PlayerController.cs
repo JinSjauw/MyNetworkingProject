@@ -169,6 +169,7 @@ public class PlayerController : MonoBehaviour
         //Only call Die() when server says so
         
         //server only updates projectile when it hits!
+        //Fire shoot event
     }
     
     private bool[] GetMovementInputs()
@@ -180,7 +181,25 @@ public class PlayerController : MonoBehaviour
             Input.GetKey(KeyCode.A),
             Input.GetKey(KeyCode.D),
         };
-        
+
+        int inputsPressed = 0;
+        foreach (var input in _inputs)
+        {
+            if (input)
+            {
+                inputsPressed++;
+            }
+        }
+
+        if (inputsPressed > 0)
+        {
+            playerManager.IsRunning(true);
+        }
+        else
+        {
+            playerManager.IsRunning(false);
+        }
+
         return _inputs;
     }
 

@@ -11,26 +11,37 @@ public class PlayerManager : MonoBehaviour
     public Action HandleTick;
     public Action<StatePayload> ReceiveServerState;
     
+    public int kills;
+    public int deaths;
+    
     private uint nextTickToProcess;
     private uint lastReceivedTick;
     private float interpTime;
-
-    public int kills;
-    public int deaths;
-
+    private Animator animator;
+    
     [SerializeField] private int HP = 100;
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
 
     public void Tick()
     {
         HandleTick();
     }
 
+    public void IsRunning(bool _state)
+    {
+        animator.SetBool("IsRunning", _state);
+    }
+    
     public void TakeDamage(int _damage)
     {
         HP -= _damage;
         Debug.Log($"Player: {id} took {_damage} damage");
     }
-
+    
     public void Die()
     {
         Debug.Log("I AM DEAD: " + id);
