@@ -279,7 +279,11 @@ public class Client : MonoBehaviour
          { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
          { (int)ServerPackets.timeRequest, ClientHandle.ReceiveTime },
          { (int)ServerPackets.spawnProjectile, ClientHandle.SpawnProjectile },
-         { (int)ServerPackets.updateProjectile, ClientHandle.UpdateProjectile }
+         { (int)ServerPackets.updateProjectile, ClientHandle.UpdateProjectile },
+         { (int)ServerPackets.playerDamage, ClientHandle.PlayerDamage },
+         { (int)ServerPackets.playerDie, ClientHandle.PlayerDie },
+         { (int)ServerPackets.playerRespawn, ClientHandle.PlayerRespawn },
+         { (int)ServerPackets.playerScoreKill, ClientHandle.PlayerScoreKill },
          //{ (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },
       };
       Debug.Log("Initialize Packets...");

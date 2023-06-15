@@ -101,11 +101,57 @@ public class ClientHandle : MonoBehaviour
         int _id = _packet.ReadInt();
         float _packetTimestamp = _packet.ReadFloat();
         int _projectileID = _packet.ReadInt();
+        int _hitClientID = _packet.ReadInt();
         Vector3 _position = _packet.ReadVector3();
 
         if (GameManager.projectilesList.ContainsKey(_projectileID))
         {
             GameManager.projectilesList[_projectileID].UpdateProjectile(_position);
+        }
+    }
+
+    public static void PlayerDamage(Packet _packet)
+    {
+        int _hitID = _packet.ReadInt();
+        float _packetTimeStamp = _packet.ReadFloat();
+        int _damage = _packet.ReadInt();
+
+        if (GameManager.players.ContainsKey(_hitID))
+        {
+            GameManager.players[_hitID].TakeDamage(_damage);
+        }
+    }
+
+    public static void PlayerDie(Packet _packet)
+    {
+        int _clientID = _packet.ReadInt();
+        float _packetTimeStamp = _packet.ReadFloat();
+
+        if (GameManager.players.ContainsKey(_clientID))
+        {
+            GameManager.players[_clientID].Die();
+        }
+    }
+
+    public static void PlayerRespawn(Packet _packet)
+    {
+        int _clientID = _packet.ReadInt();
+        float _packetTimeStamp = _packet.ReadFloat();
+        Vector2 _position = _packet.ReadVector2();
+        
+        if (GameManager.players.ContainsKey(_clientID))
+        {
+            GameManager.players[_clientID].Respawn(_position);
+        }
+    }
+
+    public static void PlayerScoreKill(Packet _packet)
+    {
+        int _clientID = _packet.ReadInt();
+
+        if (GameManager.players.ContainsKey(_clientID))
+        {
+            GameManager.players[_clientID].kills++;
         }
     }
 }

@@ -403,7 +403,8 @@ GameObject:
   - component: {fileID: 5004361284818559524}
   - component: {fileID: 7471898149183672165}
   - component: {fileID: 7384669582652957763}
-  m_Layer: 0
+  - component: {fileID: 4261901874646233350}
+  m_Layer: 8
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -475,6 +476,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &4261901874646233350
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3733822881888469728}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4654285743358434999
 GameObject:
   m_ObjectHideFlags: 0
@@ -759,6 +774,7 @@ MonoBehaviour:
   username: 
   playerGhost: {fileID: 3123610057548631228, guid: 85f67c6af26a8c647a998d4376a62f23,
     type: 3}
+  HP: 100
 --- !u!54 &6540873215159554969
 Rigidbody:
   m_ObjectHideFlags: 0

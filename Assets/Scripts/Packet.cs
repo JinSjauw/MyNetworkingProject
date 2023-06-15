@@ -14,6 +14,10 @@ public enum ServerPackets
     timeRequest = 6,
     spawnProjectile = 7,
     updateProjectile = 8,
+    playerDamage = 9,
+    playerDie = 10,
+    playerRespawn = 11,
+    playerScoreKill = 12,
 }
 
 /// <summary>Sent from client to server.</summary>
@@ -382,6 +386,14 @@ public class Packet : IDisposable
             throw new Exception("Could not read value of type 'string'!");
         }
     }
+    /// <summary> Reads a Vector2 from the packet </summary>
+    /// <param name="_moveReadPos"></param>
+    /// <returns></returns>
+    public Vector2 ReadVector2(bool _moveReadPos = true)
+    {
+        return new Vector2(ReadFloat(_moveReadPos), ReadFloat(_moveReadPos));
+    }
+    
     /// <summary> Reads a Vector3 from the packet </summary>
     /// <param name="_moveReadPos"></param>
     /// <returns></returns>

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
@@ -6,8 +7,10 @@ public class Projectile : MonoBehaviour
     private Vector3 position;
     private Vector3 direction;
     private float velocity;
-
     private bool hasHit = false;
+    private int enviromentLayer = 7;
+    private int playerLayer = 8;
+    private int combinedLayers;
     
     public void Init(int _projectileID, Vector3 _position, Vector3 _direction, float _velocity)
     {
@@ -17,6 +20,7 @@ public class Projectile : MonoBehaviour
         velocity = _velocity;
         
         transform.position = position;
+        combinedLayers = (1 << enviromentLayer) | (1 << playerLayer);
     }
     
     //public update/HandleTick function
@@ -46,7 +50,15 @@ public class Projectile : MonoBehaviour
 
     public void UpdateProjectile(Vector3 _position)
     {
-        transform.position = _position;
+        //Raycast forward
+        //return first hit. This is the impact point
         hasHit = true;
+        
+        Ray ray = new Ray(_position, direction);
+        if (Physics.Raycast(ray, out RaycastHit hit, velocity, combinedLayers))
+        {
+            Debug.Log("hit: " + hit.collider.name);
+            transform.position = hit.point;
+        }
     }
 }

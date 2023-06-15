@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Drawing;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -34,9 +31,7 @@ public struct StatePayload
 public class PlayerController : MonoBehaviour
 {
     public uint currentTick;
-    private float timer;
-    private float tickLength;
-    
+
     private Queue<StatePayload> serverStates;
     private StatePayload[] stateBuffer;
     private InputPayload[] inputBuffer;
@@ -44,7 +39,7 @@ public class PlayerController : MonoBehaviour
     private uint nextTickToProcess;
     
     private float moveSpeed = 5f;
-    private bool hasFired = false;
+    private bool hasFired;
     private Vector3 lookingDirection;
     
     private ClientPrediction clientPrediction;
@@ -56,9 +51,6 @@ public class PlayerController : MonoBehaviour
     
     private void Awake()
     {
-        tickLength = Constants.MS_PER_TICK;
-        tickLength /= 1000;
-
         serverStates = new Queue<StatePayload>();
         stateBuffer = new StatePayload[Constants.BUFFER_SIZE];
         inputBuffer = new InputPayload[Constants.BUFFER_SIZE];
@@ -79,6 +71,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void ClearServerStates()
+    {
+        serverStates.Clear();
+    }
+    
     public void HandleTick()
     {
         //Handle Reconciliation
@@ -97,7 +94,6 @@ public class PlayerController : MonoBehaviour
         }
 
         uint bufferIndex = currentTick % Constants.BUFFER_SIZE;
-        //Debug.Log(bufferIndex + " " + inputBuffer.Length);
         bool[] inputs = GetMovementInputs();
         InputPayload inputPayload = new InputPayload();
         inputPayload.tick = currentTick;
@@ -165,6 +161,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Shoot");
         //Send server a shoot packet
         ClientSend.PlayerShoot(currentTick, projectileOrigin.position, lookingDirection / 2, 20f);
+        
         //Spawn projectile effects on here;
         //Audio
         
@@ -227,7 +224,7 @@ public class PlayerController : MonoBehaviour
     }
     
     //I need to reconcile in HandleTick?
-    public void Reconcile(StatePayload _serverState)
+    private void Reconcile(StatePayload _serverState)
     {
         uint serverBufferIndex = _serverState.tick % Constants.BUFFER_SIZE;
         StatePayload predictedState = stateBuffer[serverBufferIndex];
