@@ -81,7 +81,7 @@ public class ClientHandle : MonoBehaviour
             }
         }
     }
-
+    
     public static void SpawnProjectile(Packet _packet)
     {
         int _id = _packet.ReadInt();
@@ -93,6 +93,19 @@ public class ClientHandle : MonoBehaviour
         
         //Create a new Projectile
         //Object pool that spawns projectile
-        GameManager.Instance.SpawnProjectile().Init(_projectileID, _position, _direction, _velocity);
+        GameManager.Instance.SpawnProjectile(_projectileID, _position, _direction, _velocity);
+    }
+
+    public static void UpdateProjectile(Packet _packet)
+    {
+        int _id = _packet.ReadInt();
+        float _packetTimestamp = _packet.ReadFloat();
+        int _projectileID = _packet.ReadInt();
+        Vector3 _position = _packet.ReadVector3();
+
+        if (GameManager.projectilesList.ContainsKey(_projectileID))
+        {
+            GameManager.projectilesList[_projectileID].UpdateProjectile(_position);
+        }
     }
 }

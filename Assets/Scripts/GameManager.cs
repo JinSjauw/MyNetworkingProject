@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
@@ -9,7 +7,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    public static Dictionary<int, PlayerManager> players = new Dictionary<int, PlayerManager>();
+    public static Dictionary<int, PlayerManager> players;
+    public static Dictionary<int, Projectile> projectilesList;
 
     public static Stopwatch stopWatch = new Stopwatch();
     public static float clientTimer = 0;
@@ -23,7 +22,6 @@ public class GameManager : MonoBehaviour
     private float timeRequestInterval = 5f;
     private float timerA, timerB;
     private float tickLength;
-    private List<Projectile> projectilesList;
 
     private void Awake()
     {
@@ -40,7 +38,8 @@ public class GameManager : MonoBehaviour
         tickLength = Constants.MS_PER_TICK;
         tickLength /= 1000;
         Application.runInBackground = true;
-        projectilesList = new List<Projectile>();
+        players = new Dictionary<int, PlayerManager>();
+        projectilesList = new Dictionary<int, Projectile>();
     }
 
     private void Update()
@@ -65,9 +64,9 @@ public class GameManager : MonoBehaviour
                 player.Value.Tick();
             }
 
-            foreach (Projectile projectile in projectilesList)
+            foreach (Projectile projectile in projectilesList.Values)
             {
-                projectile.UpdateProjectile();
+                projectile.HandleTick();
             }
             
             timerA -= tickLength;
@@ -76,11 +75,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public Projectile SpawnProjectile()
+    public void SpawnProjectile(int _projectileID, Vector3 _position, Vector3 _direction, float _velocity)
     {
         Projectile spawnedProjectile = Instantiate(projectilePrefab).GetComponent<Projectile>();
-        projectilesList.Add(spawnedProjectile);
-        return spawnedProjectile;
+        spawnedProjectile.Init(_projectileID, _position, _direction, _velocity);
+        projectilesList[_projectileID] = spawnedProjectile;
     }
     
     public void SpawnPlayer(int _id, string _username, Vector3 _position, Quaternion _rotation)

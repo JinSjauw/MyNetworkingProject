@@ -1,15 +1,13 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public int projectileID;
-    public Vector3 position;
-    public Vector3 direction;
-    public float velocity;
-    private ClientPrediction _clientPrediction = new ClientPrediction();
+    private int projectileID;
+    private Vector3 position;
+    private Vector3 direction;
+    private float velocity;
+
+    private bool hasHit = false;
     
     public void Init(int _projectileID, Vector3 _position, Vector3 _direction, float _velocity)
     {
@@ -22,16 +20,33 @@ public class Projectile : MonoBehaviour
     }
     
     //public update/HandleTick function
-    public void UpdateProjectile()
+    public void HandleTick()
     {
+        if (hasHit)
+        {
+            return;
+        }
+        
         //Move projectile
-        Vector3 newPosition = _clientPrediction.HandleProjectile(direction, velocity);
+        Vector3 newPosition = MoveProjectile(direction, velocity);
         
         //Since the direction is the same we use a different collision detection than on the server
-        //
-
         transform.position += newPosition;
+    }
+
+    public Vector3 MoveProjectile(Vector3 _direction, float _velocity)
+    {
+        System.Numerics.Vector2 direction = new System.Numerics.Vector2(_direction.x, _direction.z);
         
-        
+        System.Numerics.Vector3 _moveDirection = new System.Numerics.Vector3(direction.X, 0, direction.Y);
+        System.Numerics.Vector3 newPosition = _moveDirection * _velocity * Constants.MS_PER_SECOND;
+
+        return new Vector3(newPosition.X, newPosition.Y, newPosition.Z);
+    }
+
+    public void UpdateProjectile(Vector3 _position)
+    {
+        transform.position = _position;
+        hasHit = true;
     }
 }

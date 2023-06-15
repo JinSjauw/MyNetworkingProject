@@ -12,7 +12,7 @@ public class RemoteEntity : MonoBehaviour
     private StatePayload lastReceivedState;
     private float interpTime = 0;
     private float interpDelay = 0.128f;
-    private bool interpolating = false;
+    //private bool interpolating = false;
     
     private void Awake()
     {

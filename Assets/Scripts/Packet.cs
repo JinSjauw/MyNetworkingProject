@@ -13,6 +13,7 @@ public enum ServerPackets
     playerPosition = 5,
     timeRequest = 6,
     spawnProjectile = 7,
+    updateProjectile = 8,
 }
 
 /// <summary>Sent from client to server.</summary>

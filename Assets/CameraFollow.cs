@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -14,6 +10,7 @@ public class CameraFollow : MonoBehaviour
     private Vector3 target, refVel;
     private float yStart;
     [SerializeField] private float smoothTime = 0.2f;
+    [SerializeField] private float distanceThreshold;
     
     // Start is called before the first frame update
     
@@ -48,12 +45,16 @@ public class CameraFollow : MonoBehaviour
 
     Vector3 UpdateTarget()
     {
-        Vector3 result = (new Vector3(mousePosition.x, 0, mousePosition.y) + player.position) / 2f;
+        Vector3 playerPosition = player.position;
+        Vector3 result = (new Vector3(mousePosition.x, 0, mousePosition.y) - playerPosition);
         result.y = yStart;
         
-        point2Prefab.position = result;
+        result = Vector3.ClampMagnitude(result, distanceThreshold);
+        result *= 0.8f;
         
-        return result;
+        point2Prefab.position = playerPosition + result;
+        
+        return playerPosition + result;
     }
 
     private void UpdateCameraPosition()

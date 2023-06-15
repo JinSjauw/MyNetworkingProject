@@ -800,7 +800,6 @@ GameObject:
   - component: {fileID: 5469114965523367487}
   - component: {fileID: 109347953911827425}
   - component: {fileID: 8213866554069545088}
-  - component: {fileID: 2639948699714069856}
   - component: {fileID: 1600234878046717831}
   m_Layer: 0
   m_Name: Camera
@@ -900,21 +899,6 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
---- !u!114 &2639948699714069856
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6526860626469670611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eee7cd964c605694caa2e04bee15e41c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 614423965152016169}
-  sensitivity: 100
-  clampAngle: 85
 --- !u!81 &1600234878046717831
 AudioListener:
   m_ObjectHideFlags: 0
@@ -971,6 +955,7 @@ MonoBehaviour:
   pointPrefab: {fileID: 2986582224971135009}
   point2Prefab: {fileID: 7997858871679759272}
   smoothTime: 0.2
+  distanceThreshold: 5
 --- !u!1 &6639843535059859496
 GameObject:
   m_ObjectHideFlags: 0

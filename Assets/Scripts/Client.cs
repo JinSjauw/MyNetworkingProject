@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Net;
@@ -278,8 +277,9 @@ public class Client : MonoBehaviour
          { (int)ServerPackets.udpTest, ClientHandle.UDPTest },
          { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
          { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
-         { (int)ServerPackets.timeRequest, ClientHandle.ReceiveTime},
-         { (int)ServerPackets.spawnProjectile, ClientHandle.SpawnProjectile}
+         { (int)ServerPackets.timeRequest, ClientHandle.ReceiveTime },
+         { (int)ServerPackets.spawnProjectile, ClientHandle.SpawnProjectile },
+         { (int)ServerPackets.updateProjectile, ClientHandle.UpdateProjectile }
          //{ (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },
       };
       Debug.Log("Initialize Packets...");

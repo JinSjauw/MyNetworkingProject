@@ -43,7 +43,7 @@ public class PlayerController : MonoBehaviour
     private uint lastReceivedTick;
     private uint nextTickToProcess;
     
-    private float moveSpeed = 2f;
+    private float moveSpeed = 5f;
     private bool hasFired = false;
     private Vector3 lookingDirection;
     
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
         stateBuffer = new StatePayload[Constants.BUFFER_SIZE];
         inputBuffer = new InputPayload[Constants.BUFFER_SIZE];
 
-        moveSpeed /= Constants.MS_PER_TICK;
+        //moveSpeed /= Constants.MS_PER_TICK;
         
         clientPrediction = new ClientPrediction();
         playerManager = GetComponent<PlayerManager>();
@@ -111,7 +111,8 @@ public class PlayerController : MonoBehaviour
         Vector3 newPosition = ProcessMovement(inputs, newRotation);
 
         transform.position = newPosition;
-
+        //Debug.Log("Player Moving To: " + newPosition);
+        
         ClientSend.PlayerMovement(currentTick, inputs, newRotation);
 
         stateBuffer[bufferIndex] = new StatePayload()
@@ -163,7 +164,7 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("Shoot");
         //Send server a shoot packet
-        ClientSend.PlayerShoot(currentTick, projectileOrigin.position, lookingDirection / 2, 2f);
+        ClientSend.PlayerShoot(currentTick, projectileOrigin.position, lookingDirection / 2, 20f);
         //Spawn projectile effects on here;
         //Audio
         
