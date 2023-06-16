@@ -81,8 +81,12 @@ public class RemoteEntity : MonoBehaviour
         }
 
         lastProcessedState = interpolateTarget;
-        interpolateTarget = interpolationQueue.Dequeue();
-        interpTime = 0;
+        if (interpolationQueue.Count > 0)
+        {
+            interpolateTarget = interpolationQueue.Dequeue();
+            interpTime = 0;
+        }
+        
     }
     
     public void ReceiveServerState(StatePayload _serverState)

@@ -163,15 +163,6 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Shoot");
         //Send server a shoot packet
         ClientSend.PlayerShoot(currentTick, projectileOrigin.position, lookingDirection / 2, 20f);
-        playerManager.IsShooting();
-        //Spawn projectile effects on here;
-        //Audio
-        
-        //If it collides with anything spawn blood
-        //Only call Die() when server says so
-        
-        //server only updates projectile when it hits!
-        //Fire shoot event
     }
     
     private bool[] GetMovementInputs()

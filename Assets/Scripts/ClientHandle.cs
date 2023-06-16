@@ -93,6 +93,14 @@ public class ClientHandle : MonoBehaviour
         Vector3 _direction = _packet.ReadVector3();
         float _velocity = _packet.ReadFloat();
         
+        if (GameManager.players.ContainsKey(_id))
+        {
+            if (_id == Client.Instance.myId)
+            {
+                GameManager.players[_id].IsShooting();
+            }
+        }
+        
         //Create a new Projectile
         //Object pool that spawns projectile
         GameManager.Instance.SpawnProjectile(_projectileID, _position, _direction, _velocity);
@@ -140,10 +148,11 @@ public class ClientHandle : MonoBehaviour
         int _clientID = _packet.ReadInt();
         float _packetTimeStamp = _packet.ReadFloat();
         Vector2 _position = _packet.ReadVector2();
+        int _hp = _packet.ReadInt();
         
         if (GameManager.players.ContainsKey(_clientID))
         {
-            GameManager.players[_clientID].Respawn(_position);
+            GameManager.players[_clientID].Respawn(_position, _hp);
         }
     }
 
@@ -153,7 +162,7 @@ public class ClientHandle : MonoBehaviour
 
         if (GameManager.players.ContainsKey(_clientID))
         {
-            GameManager.players[_clientID].kills++;
+            GameManager.players[_clientID].AddKill();
         }
     }
 }

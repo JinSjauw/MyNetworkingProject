@@ -11,6 +11,8 @@ public class Projectile : MonoBehaviour
     private int enviromentLayer = 7;
     private int playerLayer = 8;
     private int combinedLayers;
+
+    [SerializeField] private Transform impactEffect;
     
     public void Init(int _projectileID, Vector3 _position, Vector3 _direction, float _velocity)
     {
@@ -58,6 +60,8 @@ public class Projectile : MonoBehaviour
             hasHit = true;
             Debug.Log("hit: " + hit.collider.name);
             transform.position = hit.point;
+            Transform impact = Instantiate(impactEffect, hit.point, Quaternion.identity);
+            impact.forward = hit.normal;
         }
     }
 }
