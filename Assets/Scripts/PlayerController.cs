@@ -263,7 +263,10 @@ public class PlayerController : MonoBehaviour
             while (tickToProcess < currentTick)
             {
                 uint bufferIndex = tickToProcess % Constants.BUFFER_SIZE;
-                Vector3 correctPosition = ProcessMovement(inputBuffer[bufferIndex].inputs, stateBuffer[bufferIndex].rotation);
+                Vector3 correctPosition = 
+                    ProcessMovement(inputBuffer[bufferIndex].inputs, 
+                    stateBuffer[bufferIndex].rotation);
+                
                 transform.position = correctPosition;
                 
                 StatePayload statePayload = new StatePayload()

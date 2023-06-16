@@ -13,23 +13,6 @@ public class ClientPrediction
     public UnityEngine.Vector3 HandleMovement(float _moveSpeed, UnityEngine.Quaternion _rotation, UnityEngine.Vector2 _inputDirection)
     {
         Vector2 inputDirection = new Vector2(_inputDirection.x, _inputDirection.y);
-         
-        /*if (_inputs[0])
-        {
-            inputDirection.Y += 1;
-        }
-        if (_inputs[1])
-        {
-            inputDirection.Y -= 1;
-        }
-        if (_inputs[2])
-        {
-            inputDirection.X += 1;
-        }
-        if (_inputs[3])
-        {
-            inputDirection.X -= 1;
-        }*/
 
         rotation = new Quaternion(_rotation.x, _rotation.y, _rotation.z, _rotation.w);
         Vector3 _forward = Vector3.Transform(new Vector3(0, 0, 1), rotation);
