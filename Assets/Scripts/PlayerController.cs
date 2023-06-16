@@ -21,6 +21,7 @@ public struct StatePayload
     public float roundTripTime;
     public Vector3 position;
     public Quaternion rotation;
+    public Vector2 inputDirection;
 
     public override string ToString()
     {
@@ -137,7 +138,8 @@ public class PlayerController : MonoBehaviour
     
     private Vector3 ProcessMovement(bool[] _inputs, Quaternion _rotation)
     {
-        Vector3 movement = clientPrediction.HandleMovement(_inputs, moveSpeed, _rotation);
+        Vector2 inputDirection = clientPrediction.GetInputDirection(_inputs);
+        Vector3 movement = clientPrediction.HandleMovement(moveSpeed, _rotation, inputDirection);
         Vector3 position = transform.position;
 
         if (!DetectCollision(position + movement))
@@ -161,7 +163,7 @@ public class PlayerController : MonoBehaviour
         Debug.Log("Shoot");
         //Send server a shoot packet
         ClientSend.PlayerShoot(currentTick, projectileOrigin.position, lookingDirection / 2, 20f);
-        
+        playerManager.IsShooting();
         //Spawn projectile effects on here;
         //Audio
         
@@ -191,13 +193,15 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        Vector2 inputDirection = clientPrediction.GetInputDirection(_inputs);
+        
         if (inputsPressed > 0)
         {
-            playerManager.IsRunning(true);
+            playerManager.IsRunning(true, inputDirection);
         }
         else
         {
-            playerManager.IsRunning(false);
+            playerManager.IsRunning(false, inputDirection);
         }
 
         return _inputs;
@@ -205,14 +209,20 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Added: " + other);
-        colliderList.Add(other);
+        if (!other.CompareTag("Ground"))
+        {
+            Debug.Log("Added: " + other);
+            colliderList.Add(other);   
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Removed: " + other);
-        colliderList.Remove(other);
+        if (!other.CompareTag("Ground") && colliderList.Contains(other))
+        {
+            Debug.Log("Removed: " + other);
+            colliderList.Remove(other);   
+        }
     }
 
     private bool DetectCollision(Vector3 _position)
@@ -228,7 +238,7 @@ public class PlayerController : MonoBehaviour
                 playerPosition.z < colliderPosition.z + colliderSize.z + .5f &&
                 playerPosition.z + .5f > colliderPosition.z)
             {
-                Debug.Log("Collision!");
+                Debug.Log("Collision! " + _collider.name);
                 return true;
             }
         }

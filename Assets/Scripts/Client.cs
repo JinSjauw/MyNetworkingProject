@@ -37,7 +37,7 @@ public class Client : MonoBehaviour
       tcp = new TCP();
       udp = new UDP();
    }
-
+   
    private void OnApplicationQuit()
    {
       Disconnect();

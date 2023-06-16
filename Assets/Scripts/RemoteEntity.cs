@@ -31,6 +31,7 @@ public class RemoteEntity : MonoBehaviour
 
         if (interpolationQueue.Count < 1)
         {
+            playerManager.IsRunning(false, Vector2.zero);
             return;
         }
         
@@ -59,17 +60,17 @@ public class RemoteEntity : MonoBehaviour
 
         if (Vector3.Distance(interpolateTarget.position, lastProcessedState.position) > 0.1f)
         {
-            playerManager.IsRunning(true);
+            playerManager.IsRunning(true, interpolateTarget.inputDirection);
         }
         else
         {
-            playerManager.IsRunning(false);
+            playerManager.IsRunning(false, interpolateTarget.inputDirection);
         }
         
         float difference = (interpolateTarget.timeStamp - lastProcessedState.timeStamp) * 1000f;
-        Debug.Log(difference);
+        //Debug.Log(difference);
         float timeStep = 1f / difference;
-        Debug.Log(timeStep);
+        //Debug.Log(timeStep);
         
         while (interpTime <= 1)
         {

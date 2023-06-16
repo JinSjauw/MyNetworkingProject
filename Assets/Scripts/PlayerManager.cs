@@ -18,12 +18,14 @@ public class PlayerManager : MonoBehaviour
     private uint lastReceivedTick;
     private float interpTime;
     private Animator animator;
+    private RagDollSpawner ragdollSpawner;
     
     [SerializeField] private int HP = 100;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        ragdollSpawner = GetComponent<RagDollSpawner>();
     }
 
     public void Tick()
@@ -31,24 +33,32 @@ public class PlayerManager : MonoBehaviour
         HandleTick();
     }
 
-    public void IsRunning(bool _state)
+    public void IsRunning(bool _state, Vector2 inputDirection)
     {
         animator.SetBool("IsRunning", _state);
+        animator.SetFloat("VelocityX", inputDirection.x);
+        animator.SetFloat("VelocityZ", inputDirection.y);
+    }
+
+    public void IsShooting()
+    {
+        animator.SetTrigger("hasShot");
     }
     
     public void TakeDamage(int _damage)
     {
         HP -= _damage;
         Debug.Log($"Player: {id} took {_damage} damage");
+        //Flash red?
     }
     
     public void Die()
     {
         Debug.Log("I AM DEAD: " + id);
         deaths++;
+        ragdollSpawner.Spawn();
         //gameObject.SetActive(false);
         //Spawn Ragdoll
-        //Sent Respawn Request To Server
     }
 
     public void Respawn(Vector2 _respawnPosition)

@@ -53,6 +53,7 @@ public class ClientHandle : MonoBehaviour
         float _packetTimestamp = _packet.ReadFloat();
         Vector3 _position = _packet.ReadVector3();
         Quaternion _rotation = _packet.ReadQuaternion();
+        Vector2 _inputDirection = _packet.ReadVector2();
         
         //Debug.Log($"PacketID: {_packetTick}");
         //Calculate RTT with timeSent
@@ -67,6 +68,7 @@ public class ClientHandle : MonoBehaviour
             roundTripTime = rtt,
             position = _position,
             rotation = _rotation,
+            inputDirection = _inputDirection,
         };
         
         if (GameManager.players.ContainsKey(_id))

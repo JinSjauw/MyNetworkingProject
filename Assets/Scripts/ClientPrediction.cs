@@ -10,11 +10,11 @@ public class ClientPrediction
         rotation = Quaternion.Identity;
     }
     
-    public UnityEngine.Vector3 HandleMovement(bool[] _inputs, float _moveSpeed, UnityEngine.Quaternion _rotation)
+    public UnityEngine.Vector3 HandleMovement(float _moveSpeed, UnityEngine.Quaternion _rotation, UnityEngine.Vector2 _inputDirection)
     {
-        Vector2 inputDirection = Vector2.Zero;
+        Vector2 inputDirection = new Vector2(_inputDirection.x, _inputDirection.y);
          
-        if (_inputs[0])
+        /*if (_inputs[0])
         {
             inputDirection.Y += 1;
         }
@@ -29,7 +29,7 @@ public class ClientPrediction
         if (_inputs[3])
         {
             inputDirection.X -= 1;
-        }
+        }*/
 
         rotation = new Quaternion(_rotation.x, _rotation.y, _rotation.z, _rotation.w);
         Vector3 _forward = Vector3.Transform(new Vector3(0, 0, 1), rotation);
@@ -40,6 +40,31 @@ public class ClientPrediction
 
         return new UnityEngine.Vector3(position.X, position.Y, position.Z);
     }
+
+    public UnityEngine.Vector2 GetInputDirection(bool[] _inputs)
+    {
+        UnityEngine.Vector2 inputDirection = UnityEngine.Vector2.zero;
+         
+        if (_inputs[0])
+        {
+            inputDirection.y += 1;
+        }
+        if (_inputs[1])
+        {
+            inputDirection.y -= 1;
+        }
+        if (_inputs[2])
+        {
+            inputDirection.x += 1;
+        }
+        if (_inputs[3])
+        {
+            inputDirection.x -= 1;
+        }
+
+        return inputDirection;
+    }
+    
     
     public UnityEngine.Vector3 HandleProjectile(UnityEngine.Vector3 _direction, float _velocity)
     {

@@ -52,11 +52,10 @@ public class Projectile : MonoBehaviour
     {
         //Raycast forward
         //return first hit. This is the impact point
-        hasHit = true;
-        
         Ray ray = new Ray(_position, direction);
         if (Physics.Raycast(ray, out RaycastHit hit, velocity, combinedLayers))
         {
+            hasHit = true;
             Debug.Log("hit: " + hit.collider.name);
             transform.position = hit.point;
         }
